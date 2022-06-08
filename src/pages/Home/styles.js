@@ -39,9 +39,9 @@ export const Menu = styled.ul`
 
   padding-top: 64px;
   text-align: center;
-  
+
   > li {
-    mb
+    margin-bottom: 24px;
   }
 `
 
@@ -57,5 +57,15 @@ export const Content = styled.div`
 
 export const NewNote = styled.button`
   grid-area: newnote;
-  background: yellow;
+
+  background: ${({ theme }) => theme.COLORS.ORANGE};
+  border: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    margin-right: 8px;
+  }
 `
