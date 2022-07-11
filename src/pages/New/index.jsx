@@ -5,25 +5,31 @@ import { NoteItem } from '../../components/NoteItem'
 import { Section } from '../../components/Section'
 import { Button } from '../../components/Button'
 
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { Container, Form } from './styles'
 import { useState } from 'react'
+import { api } from '../../services/api'
 
 export function New() {
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+
   const [links, setLinks] = useState([])
   const [newLink, setNewLink] = useState('')
 
   const [tags, setTags] = useState([])
   const [newTag, setNewTag] = useState('')
 
+  const navigate = useNavigate()
+
   function handleAddLink() {
     setLinks(prevState => [...prevState, newLink])
     setNewLink('')
   }
 
-  function handleRemoveLink(deleted) {
-    setLinks(prevState => prevState.filter(link => link !== deleted))
+  function handleRemoveLink(linkDeleted) {
+    setLinks(prevState => prevState.filter(link => link !== linkDeleted))
   }
 
   function handleAddTag() {
@@ -31,8 +37,20 @@ export function New() {
     setNewTag('')
   }
 
-  function handleRemoveTag(deleted) {
-    setTags(prevState => prevState.filter(tag => tag !== deleted))
+  function handleRemoveTag(tagDeleted) {
+    setTags(prevState => prevState.filter(tag => tag !== tagDeleted))
+  }
+
+  async function handleNewNote() {
+    await api.post('/notes', {
+      title,
+      description,
+      tags,
+      links
+    })
+
+    alert('Nota criada com sucesso!')
+    navigate('/')
   }
 
   return (
@@ -44,8 +62,17 @@ export function New() {
             <h1>Criar nota</h1>
             <Link to="/">voltar</Link>
           </header>
-          <Input placeholder="Título" />
-          <Textarea placeholder="Observações" />
+
+          <Input
+            placeholder="Título"
+            onChange={e => setTitle(e.target.value)}
+          />
+
+          <Textarea
+            placeholder="Observações"
+            onChange={e => setDescription(e.target.value)}
+          />
+
           <Section title="Links úteis">
             {links.map((link, index) => (
               <NoteItem
@@ -81,7 +108,7 @@ export function New() {
               />
             </div>
           </Section>
-          <Button title="Salvar" />
+          <Button title="Salvar" onClick={handleNewNote} />
         </Form>
       </main>
     </Container>
