@@ -12,6 +12,17 @@ import { api } from '../../services/api'
 
 export function Home() {
   const [tags, setTags] = useState([])
+  const [selectedTags, setSelectedTags] = useState([])
+
+  function handleSelectedTag(tagName) {
+    const alreadySelected = selectedTags.includes(tagName)
+
+    if (alreadySelected) {
+      setSelectedTags(prevState => prevState.filter(tag => tag !== tagName))
+    } else {
+      setSelectedTags(prevState => [...prevState, tagName])
+    }
+  }
 
   useEffect(() => {
     async function fetchTags() {
@@ -33,12 +44,20 @@ export function Home() {
 
       <Menu>
         <li>
-          <ButtonText title="Todos" isActive />
+          <ButtonText
+            title="Todos"
+            isActive={selectedTags.length === 0}
+            onClick={() => handleSelectedTag('all')}
+          />
         </li>
         {tags &&
           tags.map((tag, index) => (
             <li key={index}>
-              <ButtonText title={tag.name} />
+              <ButtonText
+                title={tag.name}
+                onClick={() => handleSelectedTag(tag.name)}
+                isActive={selectedTags.includes(tag.name)}
+              />
             </li>
           ))}
       </Menu>
