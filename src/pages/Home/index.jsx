@@ -6,8 +6,23 @@ import { ButtonText } from '../../components/ButtonText'
 import { Section } from '../../components/Section'
 import { Input } from '../../components/Input'
 import { Note } from '../../components/Note'
+import { useState } from 'react'
+import { useEffect } from 'react'
+import { api } from '../../services/api'
 
 export function Home() {
+  const [tags, setTags] = useState([])
+
+  useEffect(() => {
+    async function fetchTags() {
+      const response = await api.get('/tags')
+
+      setTags(response.data)
+    }
+
+    fetchTags()
+  }, [])
+
   return (
     <Container>
       <Brand>
@@ -20,12 +35,12 @@ export function Home() {
         <li>
           <ButtonText title="Todos" isActive />
         </li>
-        <li>
-          <ButtonText title="React" />
-        </li>
-        <li>
-          <ButtonText title="Nodejs" />
-        </li>
+        {tags &&
+          tags.map((tag, index) => (
+            <li key={index}>
+              <ButtonText title={tag.name} />
+            </li>
+          ))}
       </Menu>
       <Search>
         <Input placeholder="Pesquisar pelo título" />
